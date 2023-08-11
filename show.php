@@ -1,4 +1,6 @@
 <?php
+    // get the value we are using to identify the repo from the query string
+    $full_name = $_GET["full_name"];
     // our fetch request requires headers to access the information 
     // from the api
     $headers = [
@@ -6,7 +8,7 @@
         "Authorization: token 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"
     ];
     // initiate a curl session
-    $ch = curl_init("https://api.github.com/user/repos");
+    $ch = curl_init("https://api.github.com/repos/$full_name");
     // passing the url of this end point which returns a handle to the 
     // curl session so we assign that value to a variable
     // to attach the header to the reuqest we use the curl set opt
@@ -16,7 +18,7 @@
     // we need to aviod the request data from being sent directly to the browser
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
     // this will make the response body return as a string when we call the curl exec function
-
+    
     // to send the request we use the curl exec function and pass in the 
     // variable
     $response = curl_exec($ch);
@@ -33,6 +35,7 @@
     // returns the data in an array of associative arrays
     // without true it would be an object
     $data = json_decode($response, true);
+
     // foreach ($data as $repository) {
 
     //     echo $repository["full_name"], " ",
@@ -49,30 +52,13 @@
     <title>Example REST API</title>
 </head>
 <body>
-    <h1>Repositories</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Description</th>
-            </tr>
-        </thead>
-        <tbody>
-
-        <?php foreach ($data as $repo): ?>
-
-            <tr>
-                <td>
-                    <a href="show.php?full_name=<?= $repo["full_name"]?>">
-                        <?= $repo["name"]?>
-                    </a>
-                </td>
-                <td><?= htmlspecialchars($repo["description"])?></td>
-            </tr>
-
-            <?php endforeach; ?>
-        </tbody>
-    </table>
+    <h1>Repository</h1>
+        <dl>
+            <dt>Name</dt>
+            <dd><?= $data["name"];?></dd>
+            <dt>Description</dt>
+            <dd><?= htmlspecialchars($data["description"]);?></dd>
+        </dl>
+   
 </body>
 </html>
